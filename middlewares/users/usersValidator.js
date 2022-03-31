@@ -59,7 +59,7 @@ const addUserValidationHandler = function (req, res, next) {
   const errors = validationResult(req);
   // mapped() will beautify the error msg
   const mappedErrors = errors.mapped();
-  // output will be:
+  // output formate will be:
   // mappedErrors = {
   //     name:{
   //         msg:"name is required"
@@ -83,7 +83,7 @@ const addUserValidationHandler = function (req, res, next) {
       );
     }
 
-    // response the errors
+    // response the errors in json formate // we have sent html formate in loginValidator
     res.status(500).json({
       errors: mappedErrors,
     });
