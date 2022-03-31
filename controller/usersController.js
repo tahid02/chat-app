@@ -1,6 +1,9 @@
+const path = require("path");
+const { unlink } = require("fs");
 const bcrypt = require("bcrypt");
 const User = require("../models/People");
 
+// get the users from DB
 async function getUsers(req, res, next) {
   // res.locals.title = "Users"; // middleware "decorateHtmlResponse" was written to add this property dynamically
 
@@ -52,4 +55,33 @@ async function addUser(req, res, next) {
   }
 }
 
-module.exports = { getUsers, addUser };
+// delete user
+async function removeUser(req, res, next) {
+  try {
+    // we have to delete the avatar too(as it is not in DB). so  , we used findByIdAndDelete to get the deleted item and use this info to delete the avatar
+    const user = await User.findByIdAndDelete({
+      _id: req.params.id,
+    });
+    if (user.avatar) {
+      await unlink(
+        path.join(__dirname, `/../public/uploads/avatars/${filename}`),
+        (err) => {
+          if (err) console.log(err);
+        }
+      );
+    }
+    res.status(200).json({
+      message: "user has been removed successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: "Could not delete the user",
+        },
+      },
+    });
+  }
+}
+
+module.exports = { addUser, getUsers, removeUser };
