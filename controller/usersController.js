@@ -1,10 +1,18 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/People");
 
-function getUsers(req, res, next) {
+async function getUsers(req, res, next) {
   // res.locals.title = "Users"; // middleware "decorateHtmlResponse" was written to add this property dynamically
 
-  res.render("users");
+  try {
+    const users = await User.find();
+    await res.render("users", {
+      // this will render the users.ejs file from views folder
+      users: users, // sends users var in the users.ejs file.. or use users.locals
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 // add user

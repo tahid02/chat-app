@@ -37,20 +37,32 @@
             </tr>
           </thead>
           <tbody id="users-table">
-            <tr id="">
+            <!-- search forEach , if else syntax in ejs -->
+            <% users.forEach(function(user) { %>
+            <tr id="<%= user._id %>">
               <td class="name">
-                <img src="./images/user1.png" />
-                <span>User 1</span>
+                <% if (user.avatar) { %>
+                <!-- public folder can directly accessed from any file -->
+                <img src="/uploads/avatars/<%= user.avatar %>" />
+                <%} else { %>
+                <img
+                  src="https://www.oseyo.co.uk/wp-content/uploads/2020/05/empty-profile-picture-png-2-2.png"
+                />
+                <% } %>
+
+                <span> <%= user.name %></span>
               </td>
-              <td>email@email.com</td>
+              <td><%= user.email %></td>
               <td class="manage">
                 <img src="./images/trash.png" alt="Delete" />
               </td>
             </tr>
+            <% }); %>
           </tbody>
         </table>
       </div>
     </div>
     <%- include('./partials/add-user-modal.ejs') %>
+    <!-- dont use "=" sign after <% in include func. use "-" . "=" means print in ejs -->
   </body>
 </html>
