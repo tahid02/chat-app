@@ -51,5 +51,5 @@ app.use(notFoundHandler);
 // default error handler
 app.use(errorHandler);
 app.listen(process.env.PORT || 5000, () => {
-  console.log(`app listening at ${process.env.PORT}`);
+  console.log(`app listening at http://localhost:${process.env.PORT}`);
 });
