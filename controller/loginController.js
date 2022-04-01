@@ -1,17 +1,18 @@
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
 const User = require("../models/People");
-
+const bcrypt = require("bcrypt");
 // it sends login page(get login page)
 function getLogin(req, res, next) {
   // res.locals.title = "login";// middleware "decorateHtmlResponse" was written to add this property dynamically
   res.render("index");
 }
-async function login(req, res, res) {
+async function login(req, res, next) {
   try {
-    const user = await User.find({
+    const user = await User.findOne({
       $or: [{ email: req.body.username }, { mobile: req.body.mobile }],
     });
+    // console.log({ user });
     // now check password
     if (user && user._id) {
       const isValidPassword = await bcrypt.compare(
@@ -40,12 +41,14 @@ async function login(req, res, res) {
 
         // adding property in locals of res obj
         res.locals.loggedInUser = userObject;
-        await res.render("inbox");
+        await res.render("inbox"); //  if successfully logged in.. >> inbox page
       } else {
-        throw createError("login failed! please try again");
+        // throw createError("validation token cookie");
+        throw createError("log in failed ! please try again ");
       }
     } else {
-      throw createError("login failed! please try again");
+      // throw createError("user not found");
+      throw createError("log in failed ! please try again ");
     }
   } catch (error) {
     res.render("index", {
@@ -55,13 +58,19 @@ async function login(req, res, res) {
       },
       errors: {
         common: {
-          msg: err.message,
+          msg: error.message,
         },
       },
     });
   }
 }
+
+async function logout(req, res) {
+  res.clearCookie(process.env.COOKIE_NAME);
+  res.send("logged out");
+}
 module.exports = {
   getLogin,
   login,
+  logout,
 };

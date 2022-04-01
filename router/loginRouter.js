@@ -1,5 +1,5 @@
 const express = require("express");
-const { getLogin, login } = require("../controller/loginController");
+const { getLogin, login, logout } = require("../controller/loginController");
 const decorateHtmlResponse = require("../middlewares/common/decorateHtmlResponse");
 const {
   doLoginValidationHandler,
@@ -21,4 +21,5 @@ router.post(
   login
 );
 
+router.delete("/", logout);
 module.exports = router;
