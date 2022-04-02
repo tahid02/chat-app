@@ -1,4 +1,6 @@
 const Conversation = require("../models/conversation");
+const User = require("../models/People");
+const createError = require("http-errors");
 
 // get inbox page
 async function getInbox(req, res, next) {
@@ -49,4 +51,48 @@ async function addConversation(req, res, next) {
   }
 }
 
-module.exports = { getInbox, addConversation };
+// search user
+async function searchUser(req, res, next) {
+  const user = req.body.user; // got this user from checkLogin middleware
+  const searchQuery = user.replace("+88", "");
+
+  // user can search  using name or mobile or email in a single field!!!
+  const name_search_regex = new RegExp(escape(searchQuery), "i");
+  const mobile_search_regex = new RegExp("^" + escape("+88" + searchQuery));
+  const email_search_regex = new RegExp("^" + escape(searchQuery) + "$", "i"); //  user have to input full email
+
+  try {
+    if (searchQuery !== "") {
+      const users = await User.find(
+        {
+          $or: [
+            {
+              name: name_search_regex,
+            },
+            {
+              mobile: mobile_search_regex,
+            },
+            {
+              email: email_search_regex,
+            },
+          ],
+        },
+        "name avatar"
+      );
+
+      res.json(users);
+    } else {
+      throw createError("You must provide some text to search!");
+    }
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+}
+
+module.exports = { getInbox, addConversation, searchUser };
