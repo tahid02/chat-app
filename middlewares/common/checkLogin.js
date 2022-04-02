@@ -38,4 +38,15 @@ const checkLogin = async (req, res, next) => {
   }
 };
 
-module.exports = { checkLogin };
+const redirectLoggedIn = function (req, res, next) {
+  let cookies = // this cookie contain jwt token . so , if cookie exist . user is valid
+    Object.keys(req.signedCookies).length > 0 ? req.signedCookies : null;
+  console.log({ cookies });
+  if (!cookies) {
+    next();
+  } else {
+    res.redirect("/inbox"); // redirect to inbox page
+  }
+};
+
+module.exports = { checkLogin, redirectLoggedIn };

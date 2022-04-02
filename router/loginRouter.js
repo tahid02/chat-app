@@ -1,5 +1,6 @@
 const express = require("express");
 const { getLogin, login, logout } = require("../controller/loginController");
+const { redirectLoggedIn } = require("../middlewares/common/checkLogin");
 const decorateHtmlResponse = require("../middlewares/common/decorateHtmlResponse");
 const {
   doLoginValidationHandler,
@@ -10,7 +11,7 @@ const router = express.Router();
 const page_title = "login";
 
 // get the login page when user goes to the login page router
-router.get("/", decorateHtmlResponse(page_title), getLogin);
+router.get("/", decorateHtmlResponse(page_title), redirectLoggedIn, getLogin);
 
 //login process
 router.post(
