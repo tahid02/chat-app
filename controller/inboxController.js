@@ -95,4 +95,34 @@ async function searchUser(req, res, next) {
   }
 }
 
-module.exports = { getInbox, addConversation, searchUser };
+// get messages of a conversation
+async function getMessages(req, res, next) {
+  try {
+    const messages = await Message.find({
+      conversation_id: req.params.conversation_id,
+    }).sort("-createdAt");
+
+    const { participant } = await Conversation.findById(
+      req.params.conversation_id
+    );
+
+    res.status(200).json({
+      data: {
+        messages: messages,
+        participant,
+      },
+      user: req.user.userid,
+      conversation_id: req.params.conversation_id,
+    });
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: "Unknows error occured!",
+        },
+      },
+    });
+  }
+}
+
+module.exports = { getInbox, addConversation, searchUser, getMessages };

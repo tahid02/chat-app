@@ -174,7 +174,7 @@
         }
       });
 
-      // get messages of a conversation
+      // get the messages of a conversation
       async function getMessages(conversation_id, current_conversation_name) {
         // messages failure toast
         const messagesFailureToast = Toastify({
@@ -186,6 +186,7 @@
         const result = await response.json();
 
         if (!result.errors && result.data) {
+          //msg and attachment sending form will be visible
           form.style.visibility = "visible";
 
           const { data, user, conversation_id } = result;
@@ -221,7 +222,7 @@
 
                 attachments += "</div>";
 
-                // final message html
+                // final message html(msg of an user. exmpl> "hi")
                 let messageHTML = `<div class="message-row ${messageClass}"><div class="message-content">
                       ${showAvatar}
                       <div class="message-text">${message.text}</div>
@@ -232,13 +233,14 @@
                     </div></div>`;
 
                 allMessages += messageHTML;
-                messageContainer.innerHTML = allMessages;
+                messageContainer.innerHTML = allMessages; // add the msg in the main container of all messages
               });
             } else if (data.messages.length === 0) {
+              // if no msg between the two users
               messageContainer.innerHTML = '<div class="message-row"></div>';
             }
 
-            chatTitleContainer.textContent = current_conversation_name;
+            chatTitleContainer.textContent = current_conversation_name; // name of the user you are currently chatting. on top of message container
           }
         } else {
           messagesFailureToast.showToast();
