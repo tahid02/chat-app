@@ -3,6 +3,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const path = require("path");
+const http = require("http");
 const cookieParser = require("cookie-parser");
 // internal imports
 const {
@@ -12,9 +13,14 @@ const {
 const loginRouter = require("./router/loginRouter");
 const usersRouter = require("./router/usersRouter");
 const inboxRouter = require("./router/inboxRouter");
+const moment = require("moment");
 
 const app = express();
+const server = http.createServer(app);
+const io = require("socket.io")(server);
+global.io = io; // declaring io globally to get it(by global.io) from any file
 dotenv.config();
+app.locals.moment = moment; // set comment as app locals
 
 // database connection
 mongoose

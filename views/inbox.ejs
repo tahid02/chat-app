@@ -123,8 +123,12 @@
 
       // handle new/live incoming message from socket
       socket.on("new_message", (data) => {
+        // this works like event listener. so, we have to fire a "new_message" event from server
         // only respond if current conversation is open in any client
         if (data.message.conversation_id == current_conversation_id) {
+          //suppose , we entered a conversion, and upcoming msg is with same conversion id then true..
+          // because ,that means , the msg is for the conversion we are currently in
+
           // message class
           const messageClass =
             data.message.sender.id === loggedinUserId
