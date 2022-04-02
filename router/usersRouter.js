@@ -4,7 +4,7 @@ const {
   addUser,
   removeUser,
 } = require("../controller/usersController");
-const { checkLogin } = require("../middlewares/common/checkLogin");
+const { checkLogin, requireRole } = require("../middlewares/common/checkLogin");
 const decorateHtmlResponse = require("../middlewares/common/decorateHtmlResponse");
 const avatarUpload = require("../middlewares/users/avatarUpload");
 const {
@@ -13,7 +13,13 @@ const {
 } = require("../middlewares/users/usersValidator");
 const router = express.Router();
 // this will return a middleware (which adds some data in req object) , so , this middleware will work before getUsers middleware
-router.get("/", decorateHtmlResponse("Users"), checkLogin, getUsers);
+router.get(
+  "/",
+  decorateHtmlResponse("Users"),
+  checkLogin,
+  requireRole(["admin"]),
+  getUsers
+);
 
 // when user will submit data from login page .. these will happen synchronously
 // avatarUpload = stores the file
@@ -24,6 +30,7 @@ router.get("/", decorateHtmlResponse("Users"), checkLogin, getUsers);
 router.post(
   "/",
   checkLogin,
+  requireRole(["admin"]), // array is used to add more roles
   avatarUpload,
   addUserValidators,
   addUserValidationHandler,

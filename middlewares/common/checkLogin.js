@@ -49,4 +49,26 @@ const redirectLoggedIn = function (req, res, next) {
   }
 };
 
-module.exports = { checkLogin, redirectLoggedIn };
+// guard to protect routes that need role based authorization // like if we want to authorize "user" page only for specific role(s)(admin)
+function requireRole(role) {
+  // provide role(s) that u want to authorize
+  return function (req, res, next) {
+    if (req.user.role && role.includes(req.user.role)) {
+      // we got this req.user.role <<< cookie in previous middleware "checkLogin" << this cookie was set in login process(in jwt)
+      next();
+    } else {
+      if (res.locals.html) {
+        next(createError(401, "You are not authorized to access this page!"));
+      } else {
+        res.status(401).json({
+          errors: {
+            common: {
+              msg: "You are not authorized!",
+            },
+          },
+        });
+      }
+    }
+  };
+}
+module.exports = { checkLogin, redirectLoggedIn, requireRole };
